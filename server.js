@@ -14,7 +14,7 @@ const io = socketIo(server, {
 });
 
 // === НАСТРОЙКИ ===
-const GITHUB_TOKEN = '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'; // ← Замени на свой токен
+const GITHUB_TOKEN = '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'; // ← Замени на свой токен
 const GITHUB_USER = 'Virgindevil';       // ← Замени на свой логин (например, smatyzov)
 const GITHUB_REPO = 'qr-voting';        // ← имя репозитория
 const FILE_PATH = 'votes.json';
@@ -155,4 +155,5 @@ io.on('connection', (socket) => {
     console.log(`Голосование: https://${process.env.RENDER_EXTERNAL_HOSTNAME}`);
   });
 })();
+
 
