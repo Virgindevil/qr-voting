@@ -18,19 +18,21 @@ const serviceAccount = {
   type: "service_account",
   project_id: process.env.FB_PROJECT_ID,
   private_key_id: process.env.FB_PRIVATE_KEY_ID,
-  private_key: process.env.FB_PRIVATE_KEY.replace(/\\n/g, '\n'),
+  private_key: process.env.FB_PRIVATE_KEY ? process.env.FB_PRIVATE_KEY.replace(/\\n/g, '\n') : null,
   client_email: process.env.FB_CLIENT_EMAIL,
   auth_uri: "https://accounts.google.com/o/oauth2/auth",
   token_uri: "https://oauth2.googleapis.com/token",
   auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
-  client_x509_cert_url: `https://www.googleapis.com/robot/v1/metadata/x509/${encodeURIComponent(process.env.FB_CLIENT_EMAIL)}`
+  client_x509_cert_url: `https://www.googleapis.com/robot/v1/metadata/x509/${encodeURIComponent(process.env.FB_CLIENT_EMAIL || '')}`
 };
 
+// Проверка ключа
 if (!process.env.FB_PRIVATE_KEY) {
   console.log('❌ ОШИБКА: Не задана переменная FB_PRIVATE_KEY');
   process.exit(1);
 }
 
+// Инициализация Firebase
 try {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
@@ -39,6 +41,7 @@ try {
   console.log('✅ Firebase инициализирован');
 } catch (error) {
   console.log('❌ Ошибка инициализации Firebase:', error);
+  process.exit(1);
 }
 
 const db = admin.database();
@@ -74,14 +77,7 @@ app.get('/results', (req, res) => {
 
 // === SOCKET.IO ===
 io.on('connection', (socket) => {
-  console.log('Пользователь подключился');
-
-  // Отправляем текущие данные
-  socket.emit('update', votes);
-
-  // === SOCKET.IO ===
-io.on('connection', (socket) => {
-  console.log('Пользователь подключился');
+  console.log('Пользователь подключился:', socket.id);
 
   // Отправляем текущие данные
   socket.emit('update', votes);
@@ -95,13 +91,13 @@ io.on('connection', (socket) => {
         io.emit('update', votes);
         console.log('✅ Голос сохранён:', votes);
       } catch (err) {
-        console.log('❌ Ошибка сохранения:', err);
+        console.log('❌ Ошибка сохранения в Firebase:', err);
       }
     }
   });
 
   socket.on('disconnect', () => {
-    console.log('Пользователь отключился');
+    console.log('Пользователь отключился:', socket.id);
   });
 });
 
@@ -121,10 +117,8 @@ io.on('connection', (socket) => {
     console.log(`🔗 Голосование: https://qr-voting.onrender.com`);
     console.log(`📊 Результаты: https://qr-voting.onrender.com/results`);
   });
+
+  server.on('error', (err) => {
+    console.error('❌ Ошибка сервера:', err);
+  });
 })();
-
-
-
-
-
-
