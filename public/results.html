@@ -1,15 +1,54 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>Результаты</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Результаты голосования</title>
   <style>
-    body { font-family: Arial; text-align: center; padding: 40px; }
-    .chart { width: 60%; height: 40px; background: #ddd; margin: 30px auto; position: relative; }
-    .bar { height: 100%; position: absolute; top: 0; }
-    .yes { background: #4CAF50; left: 0; }
-    .no { background: #f44336; right: 0; }
-    .label { font-size: 24px; margin: 10px; }
+    body { 
+      font-family: 'Arial', sans-serif; 
+      text-align: center; 
+      padding: 40px; 
+      background: #f0f0f0;
+      margin: 0;
+    }
+    h1 {
+      color: #333;
+    }
+    .chart {
+      width: 80%;
+      max-width: 600px;
+      height: 60px;
+      background: #ddd;
+      margin: 40px auto;
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .bar {
+      height: 100%;
+      position: absolute;
+      top: 0;
+      transition: width 0.5s ease;
+    }
+    .yes {
+      background: #28a745;
+      left: 0;
+    }
+    .no {
+      background: #dc3545;
+      right: 0;
+    }
+    .label {
+      font-size: 28px;
+      margin: 10px;
+      font-weight: bold;
+    }
+    .total {
+      font-size: 18px;
+      color: #555;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -20,7 +59,7 @@
   </div>
   <div class="label">Да: <span id="yesCount">0</span></div>
   <div class="label">Нет: <span id="noCount">0</span></div>
-  <div class="label">Всего: <span id="total">0</span></div>
+  <div class="total">Всего голосов: <span id="total">0</span></div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
@@ -28,16 +67,19 @@
       transports: ['websocket'],
       upgrade: false
     });
+
     socket.on('update', (votes) => {
-      const total = votes.yes + votes.no;
-      document.getElementById('yesCount').textContent = votes.yes;
-      document.getElementById('noCount').textContent = votes.no;
+      const yes = votes.yes || 0;
+      const no = votes.no || 0;
+      const total = yes + no;
+
+      document.getElementById('yesCount').textContent = yes;
+      document.getElementById('noCount').textContent = no;
       document.getElementById('total').textContent = total;
-      document.getElementById('barYes').style.width = (votes.yes / total) * 100 + '%';
-      document.getElementById('barNo').style.width = (votes.no / total) * 100 + '%';
+
+      document.getElementById('barYes').style.width = total ? (yes / total) * 100 + '%' : '0%';
+      document.getElementById('barNo').style.width = total ? (no / total) * 100 + '%' : '0%';
     });
   </script>
 </body>
-
 </html>
-
