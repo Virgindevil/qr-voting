@@ -84,13 +84,14 @@ app.get('/results', (req, res) => {
 // === 5. ЗАПУСК СЕРВЕРА ===
 (async () => {
   await loadVotes(); // Ждём загрузки голосов
-  const PORT = process.env.PORT || 3000;
+  const PORT = process.env.PORT || 10000;
   server.listen(PORT, () => {
     console.log(`🚀 Сервер запущен на порту ${PORT}`);
     console.log(`🔗 Голосование: https://qr-voting.onrender.com`);
     console.log(`📊 Результаты: https://qr-voting.onrender.com/results`);
   });
 })();
+
 
 
 
