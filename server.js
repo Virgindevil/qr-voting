@@ -32,7 +32,7 @@ const serviceAccount = {
 // Инициализируем Firebase
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://qr-voting-live-default-rtdb.europe-west1.firebasedatabase.app" // ← замени на свою
+  databaseURL: "https://qr-voting-live-default-rtdb.europe-west1.firebasedatabase.app/" // ← замени на свою
 });
 
 // Получаем доступ к базе
@@ -91,3 +91,4 @@ app.get('/results', (req, res) => {
     console.log(`📊 Результаты: https://qr-voting.onrender.com/results`);
   });
 })();
+
