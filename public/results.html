@@ -81,5 +81,18 @@
       document.getElementById('barNo').style.width = total ? (no / total) * 100 + '%' : '0%';
     });
   </script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io({
+      transports: ['websocket'],
+      upgrade: false
+    });
+    socket.on('update', (votes) => {
+      document.getElementById('yesCount').textContent = votes.yes;
+      document.getElementById('noCount').textContent = votes.no;
+    });
+  </script>
+  
 </body>
 </html>
+
