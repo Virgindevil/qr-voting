@@ -112,6 +112,18 @@ io.on('connection', (socket) => {
   });
 })();
 
+socket.on('vote', async (data) => {
+  if (data === 'yes' || data === 'no') {
+    votes[data]++;
+    try {
+      await db.ref('votes').set(votes); // Сохраняем в Firebase
+      io.emit('update', votes); // Отправляем всем
+      console.log('✅ Голос сохранён:', votes);
+    } catch (err) {
+      console.log('❌ Ошибка сохранения:', err);
+    }
+  }
+});
 
 
 
