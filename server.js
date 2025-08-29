@@ -74,20 +74,29 @@ app.get('/results', (req, res) => {
 
 // === SOCKET.IO ===
 io.on('connection', (socket) => {
+  console.log('Пользователь подключился');
+
+  // Отправляем текущие данные
   socket.emit('update', votes);
 
+  // ✅ Обработка голоса — внутри соединения
   socket.on('vote', async (data) => {
     if (data === 'yes' || data === 'no') {
       votes[data]++;
       try {
         await db.ref('votes').set(votes);
         io.emit('update', votes);
-        console.log('🗳️ Голос принят:', data, votes);
+        console.log('✅ Голос сохранён:', votes);
       } catch (err) {
-        console.log('❌ Ошибка сохранения голоса:', err);
+        console.log('❌ Ошибка сохранения:', err);
       }
     }
   });
+
+  socket.on('disconnect', () => {
+    console.log('Пользователь отключился');
+  });
+});
 });
 
 // === СТАРТ ===
@@ -124,6 +133,7 @@ socket.on('vote', async (data) => {
     }
   }
 });
+
 
 
 
