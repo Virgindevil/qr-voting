@@ -79,7 +79,14 @@ io.on('connection', (socket) => {
   // Отправляем текущие данные
   socket.emit('update', votes);
 
-  // ✅ Обработка голоса — внутри соединения
+  // === SOCKET.IO ===
+io.on('connection', (socket) => {
+  console.log('Пользователь подключился');
+
+  // Отправляем текущие данные
+  socket.emit('update', votes);
+
+  // Принимаем голос
   socket.on('vote', async (data) => {
     if (data === 'yes' || data === 'no') {
       votes[data]++;
@@ -114,24 +121,8 @@ io.on('connection', (socket) => {
     console.log(`🔗 Голосование: https://qr-voting.onrender.com`);
     console.log(`📊 Результаты: https://qr-voting.onrender.com/results`);
   });
-
-  server.on('error', (err) => {
-    console.error('❌ Ошибка сервера:', err);
-  });
 })();
 
-socket.on('vote', async (data) => {
-  if (data === 'yes' || data === 'no') {
-    votes[data]++;
-    try {
-      await db.ref('votes').set(votes); // Сохраняем в Firebase
-      io.emit('update', votes); // Отправляем всем
-      console.log('✅ Голос сохранён:', votes);
-    } catch (err) {
-      console.log('❌ Ошибка сохранения:', err);
-    }
-  }
-});
 
 
 
