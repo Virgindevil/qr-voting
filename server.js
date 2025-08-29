@@ -94,10 +94,10 @@ io.on('connection', (socket) => {
 (async () => {
   await loadVotes();
   const PORT = process.env.PORT || 10000;
-
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Сервер запущен на порту ${PORT}`);
-});
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Сервер запущен на порту ${PORT}`);
+  });
+})();
 
 
 
