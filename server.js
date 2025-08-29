@@ -5,32 +5,42 @@ const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = socketIo(server, {
+  cors: {
+    origin: "*", // Разрешаем все домены (для теста)
+    methods: ["GET", "POST"]
+  }
+});
 
 let votes = { yes: 0, no: 0 };
 
-// Подключаем папку public
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Главная страница
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'vote.html'));
 });
 
-// Страница результатов
 app.get('/results', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'results.html'));
 });
 
-// WebSockets
 io.on('connection', (socket) => {
+  console.log('Пользователь подключился:', socket.id);
+
+  // Отправляем текущие данные
   socket.emit('update', votes);
 
+  // Принимаем голос
   socket.on('vote', (data) => {
     if (data === 'yes' || data === 'no') {
       votes[data]++;
+      console.log(`Голос: ${data}`, votes);
       io.emit('update', votes);
     }
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Пользователь отключился:', socket.id);
   });
 });
 
