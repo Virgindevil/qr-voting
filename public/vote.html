@@ -15,11 +15,14 @@
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    const socket = io();
+    const socket = io({
+    transports: ['websocket'],
+    upgrade: false
     function vote(choice) {
       socket.emit('vote', choice);
       document.body.innerHTML = "<h2>Спасибо за голос!</h2>";
     }
   </script>
 </body>
+
 </html>
