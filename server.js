@@ -26,6 +26,11 @@ const serviceAccount = {
   client_x509_cert_url: `https://www.googleapis.com/robot/v1/metadata/x509/${encodeURIComponent(process.env.FB_CLIENT_EMAIL)}`
 };
 
+if (!process.env.FB_PRIVATE_KEY) {
+  console.log('❌ ОШИБКА: Не задана переменная FB_PRIVATE_KEY');
+  process.exit(1);
+}
+
 try {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
@@ -93,3 +98,4 @@ io.on('connection', (socket) => {
     console.log(`🚀 Сервер запущен на порту ${PORT}`);
   });
 })();
+
