@@ -24,7 +24,9 @@
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    const socket = io();
+    const socket = io({
+    transports: ['websocket'],
+    upgrade: false
     socket.on('update', (votes) => {
       const total = votes.yes + votes.no;
       document.getElementById('yesCount').textContent = votes.yes;
@@ -35,4 +37,5 @@
     });
   </script>
 </body>
+
 </html>
