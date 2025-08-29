@@ -97,7 +97,6 @@ io.on('connection', (socket) => {
     console.log('Пользователь отключился');
   });
 });
-});
 
 // === СТАРТ ===
 (async () => {
@@ -133,6 +132,7 @@ socket.on('vote', async (data) => {
     }
   }
 });
+
 
 
 
