@@ -64,13 +64,19 @@ function saveVotesToGitHub() {
   // Получаем SHA файла
   https.get(
     `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${FILE_PATH}`,
-    { headers: { 'Authorization': `token ${GITHUB_TOKEN}` } },
+    { 
+      headers: { 
+        'Authorization': `token ${GITHUB_TOKEN}`,
+        'User-Agent': 'Node.js'
+      } 
+    },
     (res) => {
       let body = '';
       res.on('data', (chunk) => body += chunk);
       res.on('end', () => {
         try {
-          const sha = JSON.parse(body).sha;
+          const response = JSON.parse(body);
+          const sha = response.sha; // Получаем SHA
 
           // Обновляем файл
           const req = https.request(
@@ -84,7 +90,9 @@ function saveVotesToGitHub() {
               }
             },
             (res) => {
-              res.on('data', () => {});
+              res.on('data', (chunk) => {
+                // Можно логировать ответ, если нужно
+              });
             }
           );
 
@@ -95,7 +103,7 @@ function saveVotesToGitHub() {
           }));
           req.end();
         } catch (e) {
-          // Если файла нет — создаём
+          // Если файла нет (например, 404), создаём его
           const req = https.request(
             `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${FILE_PATH}`,
             {
@@ -119,7 +127,9 @@ function saveVotesToGitHub() {
         }
       });
     }
-  ).on('error', console.log);
+  ).on('error', (err) => {
+    console.log('Ошибка при сохранении голосов:', err.message);
+  });
 }
 
 // === EXPRESS ===
@@ -155,6 +165,7 @@ io.on('connection', (socket) => {
     console.log(`Голосование: https://${process.env.RENDER_EXTERNAL_HOSTNAME}`);
   });
 })();
+
 
 
 
