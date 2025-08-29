@@ -92,12 +92,26 @@ io.on('connection', (socket) => {
 
 // === СТАРТ ===
 (async () => {
-  await loadVotes();
+  try {
+    await loadVotes();
+    console.log('📊 Голоса загружены:', votes);
+  } catch (error) {
+    console.log('❌ Ошибка при старте:', error);
+  }
+
   const PORT = process.env.PORT || 10000;
+
   server.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Сервер запущен на порту ${PORT}`);
+    console.log(`🔗 Голосование: https://qr-voting.onrender.com`);
+    console.log(`📊 Результаты: https://qr-voting.onrender.com/results`);
+  });
+
+  server.on('error', (err) => {
+    console.error('❌ Ошибка сервера:', err);
   });
 })();
+
 
 
 
