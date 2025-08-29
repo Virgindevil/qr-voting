@@ -93,9 +93,11 @@ io.on('connection', (socket) => {
 // === СТАРТ ===
 (async () => {
   await loadVotes();
-  const PORT = process.env.PORT || 10000;
-  server.listen(PORT, () => {
+  const PORT = parseInt(process.env.PORT) || 10000;
+  server.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Сервер запущен на порту ${PORT}`);
+    console.log(`🔗 Голосование: https://${process.env.RENDER_EXTERNAL_HOSTNAME}`);
   });
 })();
+
 
