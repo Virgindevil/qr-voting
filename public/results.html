@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Результаты</title>
+  <style>
+    body { font-family: Arial; text-align: center; padding: 40px; }
+    .chart { width: 60%; height: 40px; background: #ddd; margin: 30px auto; position: relative; }
+    .bar { height: 100%; position: absolute; top: 0; }
+    .yes { background: #4CAF50; left: 0; }
+    .no { background: #f44336; right: 0; }
+    .label { font-size: 24px; margin: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Результаты голосования</h1>
+  <div class="chart">
+    <div id="barYes" class="bar yes" style="width: 0%"></div>
+    <div id="barNo" class="bar no" style="width: 0%"></div>
+  </div>
+  <div class="label">Да: <span id="yesCount">0</span></div>
+  <div class="label">Нет: <span id="noCount">0</span></div>
+  <div class="label">Всего: <span id="total">0</span></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    socket.on('update', (votes) => {
+      const total = votes.yes + votes.no;
+      document.getElementById('yesCount').textContent = votes.yes;
+      document.getElementById('noCount').textContent = votes.no;
+      document.getElementById('total').textContent = total;
+      document.getElementById('barYes').style.width = (votes.yes / total) * 100 + '%';
+      document.getElementById('barNo').style.width = (votes.no / total) * 100 + '%';
+    });
+  </script>
+</body>
+</html>
